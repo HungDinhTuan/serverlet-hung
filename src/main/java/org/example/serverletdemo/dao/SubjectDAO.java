@@ -2,46 +2,38 @@ package org.example.serverletdemo.dao;
 
 import org.example.serverletdemo.db.Database;
 import org.example.serverletdemo.entity.Student;
+import org.example.serverletdemo.entity.Subject;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StudentDAO implements  DAOInterface<Student> {
-
+public class SubjectDAO implements DAOInterface<Subject> {
     @Override
-    public List<Student> getAll() {
-        String sql = "select * from Persons";
-        List<Student> list = new ArrayList<Student>();
+    public List<Subject> getAll() {
+        String sql = "select * from Subjects";
+        List<Subject> list = new ArrayList<Subject>();
         try {
             Database db = Database.createInstance();
             ResultSet rs = db.getStatement().executeQuery(sql);
             while (rs.next()) {
-                list.add(new Student(
-                        rs.getInt("Id"),
-                        rs.getString("LastName"),
-                        rs.getString("FirstName"),
-                        rs.getString("Address"),
-                        rs.getString("City")
+                list.add(new Subject(
+                        rs.getInt("IdSubject"),
+                        rs.getString("Name")
                 ));
             }
-        }catch (Exception e) {
-
-        }
+        }catch (Exception e) {}
         return list;
     }
 
     @Override
-    public boolean create(Student student) {
-        String sql = "insert into Persons(LastName, FirstName, Address, City) values(?,?,?,?)";
+    public boolean create(Subject subject) {
+        String sql = "insert into Subjects(Name) values(?)";
         try{
             Database db = Database.createInstance();
             PreparedStatement prst = db.getPreparedStatement(sql);
-            prst.setString(1, student.getLastName());
-            prst.setString(2, student.getFirstName());
-            prst.setString(3, student.getAddress());
-            prst.setString(4, student.getCity());
+            prst.setString(1, subject.getName());
             prst.execute();
             return true;
         }catch (Exception e) {
@@ -51,16 +43,13 @@ public class StudentDAO implements  DAOInterface<Student> {
     }
 
     @Override
-    public boolean update(Student student) {
-        String sql = "Update Persons set LastName = ?, FirstName = ?, Address = ?, City = ? where Id = ? ";
+    public boolean update(Subject subject) {
+        String sql = "Update Subjects set Name = ? where IdSubject = ? ";
         try{
             Database db = Database.createInstance();
             PreparedStatement prst = db.getPreparedStatement(sql);
-            prst.setString(1, student.getLastName());
-            prst.setString(2, student.getFirstName());
-            prst.setString(3, student.getAddress());
-            prst.setString(4, student.getCity());
-            prst.setInt(5, student.getId());
+            prst.setString(1, subject.getName());
+            prst.setInt(2, subject.getIdSubject());
             prst.executeUpdate();
             return true;
         } catch (Exception e) {
@@ -70,12 +59,12 @@ public class StudentDAO implements  DAOInterface<Student> {
     }
 
     @Override
-    public boolean delete(Student student) {
-        String sql = "delete from Persons where Id = ?";
+    public boolean delete(Subject subject) {
+        String sql = "delete from Subjects where IdSubject = ?";
         try {
             Database db = Database.createInstance();
             PreparedStatement prst = db.getPreparedStatement(sql);
-            prst.setInt(1, student.getId());
+            prst.setInt(1, subject.getIdSubject());
             prst.executeUpdate();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -84,9 +73,9 @@ public class StudentDAO implements  DAOInterface<Student> {
     }
 
     @Override
-    public <K> Student find(K id) {
-        String sql = "select * from Persons where Id = ?";
-        Student student = null;
+    public <K> Subject find(K id) {
+        String sql = "select * from Subjects where IdSubject = ?";
+        Subject subject = null;
         try {
             Database db  = Database.createInstance();
             PreparedStatement prst = db.getPreparedStatement(sql);
@@ -94,15 +83,12 @@ public class StudentDAO implements  DAOInterface<Student> {
             ResultSet rs = prst.executeQuery();
 
             if (rs.next()) {
-                student = new Student(
+                subject = new Subject(
                         rs.getInt("Id"),
-                        rs.getString("LastName"),
-                        rs.getString("FirstName"),
-                        rs.getString("Address"),
-                        rs.getString("City")
+                        rs.getString("Name")
                 );
             }
-            return student;
+            return subject;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
