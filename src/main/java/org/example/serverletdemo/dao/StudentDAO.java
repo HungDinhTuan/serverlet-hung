@@ -81,7 +81,6 @@ public class StudentDAO implements  DAOInterface<Student> {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-
         return false;
     }
 
@@ -104,9 +103,10 @@ public class StudentDAO implements  DAOInterface<Student> {
                         rs.getString("City")
                 );
             }
+            return student;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        return student;
+        return null;
     }
 }
